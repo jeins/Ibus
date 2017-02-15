@@ -1,10 +1,10 @@
 {
-  "name": "Ibux",
+  "name": "Ibus",
   "version": "1.0.0",
   "description": "simple shop management",
   "author": "Muhammad Juan Akbar",
   "scripts": {
-    "app:start": "node index.js",
+    "app:start": "node ./bin/www",
     "depedencies:version": "npm-check",
     "db:migrate": "node_modules\\.bin\\sequelize db:migrate",
     "db:seed": "node_modules\\.bin\\sequelize db:seed:all"
@@ -12,7 +12,6 @@
   "dependencies": {
     "async": "^2.1.4",
     "body-parser": "^1.15.2",
-    "dotenv": "^4.0.0",
     "errorhandler": "^1.4.3",
     "express": "^4.14.0",
     "lodash": "^4.16.6",
