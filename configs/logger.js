@@ -12,7 +12,7 @@ module.exports = new (winston.Logger)({
             filename: path.join(logPath, './log'),
             datePattern: 'yyyy-MM-dd.',
             prepend: true,
-            level: process.env.ENV === 'development' ? 'debug' : 'info'
+            level: 'verbose'
         }),
         new (winston.transports.Console)({
             colorize: 'all'
