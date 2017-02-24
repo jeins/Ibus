@@ -26,6 +26,9 @@ function Products() {
 };
 
 Products.prototype = {
+    db: ()=>{
+        return db;
+    },
     getList: (attributes, offset, limit, cb) => {
         db.findAll({
             attributes: attributes,

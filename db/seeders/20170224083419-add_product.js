@@ -2,6 +2,7 @@
 
 const faker = require('faker');
 const moment = require('moment');
+const uuid = require('uuid/v1');
 
 module.exports = {
   up: function (queryInterface, Sequelize) {
@@ -11,6 +12,7 @@ module.exports = {
 
     for(let i=0; i<100; i++){
       arrData.push({
+        id: uuid(),
         name: faker.commerce.productName(),
         description: faker.company.catchPhrase(),
         category: category[Math.floor((Math.random() * 3) + 0)],
