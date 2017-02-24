@@ -7,6 +7,9 @@ const model = require('./');
 
 let db;
 
+/**
+ * @constructor
+ */
 function Products() {
     let tableName = 'Products';
 
@@ -26,9 +29,21 @@ function Products() {
 };
 
 Products.prototype = {
+    /**
+     * get master db
+     * @returns {*}
+     */
     db: ()=>{
         return db;
     },
+
+    /**
+     * get product from specific pagination
+     * @param attributes
+     * @param offset
+     * @param limit
+     * @param cb
+     */
     getList: (attributes, offset, limit, cb) => {
         db.findAll({
             attributes: attributes,
@@ -43,10 +58,16 @@ Products.prototype = {
             })
             .catch((err) => {
                 logger.log('error', 'error on get products | error: %s | offset: %s | limit: %s', err.message, offset, limit);
-                cb(_errorHandler(), null);
+                cb(_errorHandler(err), null);
             });
     },
 
+    /**
+     * get product with specific id
+     * @param attributes
+     * @param productId
+     * @param cb
+     */
     getById: (attributes, productId, cb) => {
         let params = {where: {id: productId}};
 
@@ -60,10 +81,15 @@ Products.prototype = {
             })
             .catch((err) => {
                 logger.log('error', 'error on get product by id | error: %s | id: %s', err.message, productId);
-                cb(_errorHandler(), null);
+                cb(_errorHandler(err), null);
             });
     },
 
+    /**
+     * add new product
+     * @param data
+     * @param cb
+     */
     add: (data, cb) => {
         let attributes = ['name', 'description', 'category', 'status', 'purchasePrice', 'sellingPrice', 'billImage', 'image'];
         let productData = _validateData(attributes, data);
@@ -80,10 +106,16 @@ Products.prototype = {
             })
             .catch((err) => {
                 logger.log('error', 'error on create new product | error: %s', err.message);
-                cb(_errorHandler(), null);
+                cb(_errorHandler(err), null);
             });
     },
 
+    /**
+     * update product data
+     * @param productId
+     * @param newData
+     * @param cb
+     */
     update: (productId, newData, cb) => {
         let attributes = ['name', 'description', 'category', 'status', 'purchasePrice', 'sellingPrice', 'billImage', 'image'];
         let newProductData = _validateData(attributes, newData);
@@ -97,10 +129,15 @@ Products.prototype = {
             })
             .catch((err) => {
                 logger.log('error', 'error on update product | error: %s | id: %s | new data: %s', err.message, productId, JSON.stringify(newProductData));
-                cb(_errorHandler(), null);
+                cb(_errorHandler(err), null);
             });
     },
 
+    /**
+     * remove product
+     * @param productId
+     * @param cb
+     */
     delete: (productId, cb) => {
         db.destroy({where: {id: productId}})
             .then((status) => {
@@ -111,7 +148,7 @@ Products.prototype = {
             })
             .catch((err) => {
                 logger.log('error', 'error on delete product | error: %s | id: %s', err.message, productId);
-                cb(_errorHandler(), null);
+                cb(_errorHandler(err), null);
             });
     }
 };
@@ -153,7 +190,7 @@ function _decodeJson(objs) {
     return objs;
 }
 
-function _errorHandler() {
+function _errorHandler(err) {
     return {
         error: true,
         message: err.message
