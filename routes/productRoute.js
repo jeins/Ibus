@@ -88,17 +88,22 @@ function _convertPrice(obj){
 
     if(obj.currency === 'rupiah'){
         let n = 3;
-        let i;
         let val = obj.value.toString();
+        let i;
+
         for(i=n; i < val.length; i+=n){
             priceText.push(val.substr(val.length - i, n));
         }
+
         priceText = _.reverse(priceText);
-        console.log(priceText);
+
         let txt = '.' + _.join(priceText, '.');
         let rest = val.replace(_.join(priceText, ''), '');
 
-        obj['text'] = (rest === '.') ? txt : (txt === '.') ? rest : rest + txt;
+        obj['text'] = 'Rp ' + ((rest === '.') ? txt : (txt === '.') ? rest : rest + txt);
+    } else{
+        //TODO
+        obj['text'] = obj.value + ' €';
     }
 }
 
