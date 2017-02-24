@@ -47,6 +47,23 @@ Products.prototype = {
             });
     },
 
+    getById: (attributes, productId, cb) => {
+        let params = {where: {id: productId}};
+
+        if(attributes[0] !== '*') params[attributes] = attributes;
+
+        db.find(params)
+            .then((products) => {
+                logger.log('info', 'get product by id | id: %s', productId);
+
+                cb(null, _decodeJson(JSON.stringify(products)));
+            })
+            .catch((err) => {
+                logger.log('error', 'error on get product by id | error: %s | id: %s', err.message, productId);
+                cb(_errorHandler(), null);
+            });
+    },
+
     add: (data, cb) => {
         let attributes = ['name', 'description', 'category', 'status', 'purchasePrice', 'sellingPrice', 'billImage', 'image'];
         let productData = _validateData(attributes, data);
@@ -116,14 +133,22 @@ function _validateData(allowedFields, data) {
 function _decodeJson(objs) {
     objs = JSON.parse(objs);
 
-    _.forEach(objs, (obj) => {
+    let doDecode = (obj)=>{
         _.forEach(obj, (value, key) => {
             try {
                 obj[key] = JSON.parse(value);
             } catch (e) {
             }
         });
-    });
+    };
+
+    if(_.isArray(objs)){
+        _.forEach(objs, (obj) => {
+            doDecode(obj);
+        });
+    } else{
+        doDecode(objs);
+    }
 
     return objs;
 }

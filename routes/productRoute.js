@@ -7,14 +7,22 @@ const router = express.Router();
 
 let result;
 
-router.get('/list/:currPage/:limit', (req, res)=>{
+router.get('/list/:limit/:currPage', (req, res)=>{
     result = res;
-    let attributes = ['id', 'name', 'status', 'sellingPrice'];
+    let attributes = ['id', 'name', 'status', 'sellingPrice', 'image'];
     let currPage = (req.params.currPage > 0) ? (req.params.currPage - 1) : 0 ;
     let limit = Number(req.params.limit);
     let offset = Number(currPage * limit);
 
     product.getList(attributes, offset, limit, _callbackHandler);
+});
+
+router.get('/:productId', (req, res)=>{
+    result = res;
+    let attributes = ['*'];
+    let productId = req.params.productId;
+
+    product.getById(attributes, productId, _callbackHandler);
 });
 
 router.post('/add', (req, res)=>{
