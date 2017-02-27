@@ -80,7 +80,7 @@ Customer.prototype = {
             .then((result) => {
                 let customer = result.get();
 
-                logger.log('verbose', 'create new customer | details: %s', JSON.stringify(customer));
+                logger.log('history', 'create new customer | details: %s', JSON.stringify(customer));
 
                 cb(null, customer);
             })
@@ -102,7 +102,7 @@ Customer.prototype = {
 
         db.update(newCustomerData, {where: {id: customerId}})
             .then((status) => {
-                logger.log('verbose', 'update customer | id: %s | status: %s | new data: %s', customerId, status, JSON.stringify(newCustomerData));
+                logger.log('history', 'update customer | id: %s | status: %s | new data: %s', customerId, status, JSON.stringify(newCustomerData));
 
                 if (status) cb(null, {success: true});
                 else cb(null, {success: false});
@@ -121,7 +121,7 @@ Customer.prototype = {
     delete: (customerId, cb) => {
         db.destroy({where: {id: customerId}})
             .then((status) => {
-                logger.log('verbose', 'delete customer | id: %s | status: %s', customerId, status);
+                logger.log('history', 'delete customer | id: %s | status: %s', customerId, status);
 
                 if (status) cb(null, {success: true});
                 else cb(null, {success: false});

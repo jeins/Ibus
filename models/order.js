@@ -127,7 +127,7 @@ Order.prototype = {
             .then((result) => {
                 let order = result.get();
 
-                logger.log('verbose', 'create new order | details: %s', JSON.stringify(order));
+                logger.log('history', 'create new order | details: %s', JSON.stringify(order));
 
                 cb(null, order);
             })
@@ -149,7 +149,7 @@ Order.prototype = {
 
         db.update(newOrderData, {where: {id: orderId}})
             .then((status) => {
-                logger.log('verbose', 'update order | id: %s | status: %s | new data: %s', orderId, status, JSON.stringify(newOrderData));
+                logger.log('history', 'update order | id: %s | status: %s | new data: %s', orderId, status, JSON.stringify(newOrderData));
 
                 if (status) cb(null, {success: true});
                 else cb(null, {success: false});
@@ -168,7 +168,7 @@ Order.prototype = {
     delete: (orderId, cb) => {
         db.destroy({where: {id: orderId}})
             .then((status) => {
-                logger.log('verbose', 'delete order | id: %s | status: %s', orderId, status);
+                logger.log('history', 'delete order | id: %s | status: %s', orderId, status);
 
                 if (status) cb(null, {success: true});
                 else cb(null, {success: false});

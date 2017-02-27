@@ -10,7 +10,7 @@ let tableName = 'Products';
 /**
  * @constructor
  */
-function Product() {console.log(model.test);
+function Product() {
     db = model.sequelize.import(tableName, (sequelize, DataTypes) => {
         return model.sequelize.define(tableName, tableFields(DataTypes));
     });
@@ -109,7 +109,7 @@ Product.prototype = {
             .then((result) => {
                 let product = result.get();
 
-                logger.log('verbose', 'create new product | details: %s', JSON.stringify(product));
+                logger.log('history', 'create new product | details: %s', JSON.stringify(product));
 
                 cb(null, model.decodeJson(product));
             })
@@ -131,7 +131,7 @@ Product.prototype = {
 
         db.update(newProductData, {where: {id: productId}})
             .then((status) => {
-                logger.log('verbose', 'update product | id: %s | status: %s | new data: %s', productId, status, JSON.stringify(newProductData));
+                logger.log('history', 'update product | id: %s | status: %s | new data: %s', productId, status, JSON.stringify(newProductData));
 
                 if (status) cb(null, {success: true});
                 else cb(null, {success: false});
@@ -150,7 +150,7 @@ Product.prototype = {
     delete: (productId, cb) => {
         db.destroy({where: {id: productId}})
             .then((status) => {
-                logger.log('verbose', 'delete product | id: %s | status: %s', productId, status);
+                logger.log('history', 'delete product | id: %s | status: %s', productId, status);
 
                 if (status) cb(null, {success: true});
                 else cb(null, {success: false});
