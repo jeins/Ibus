@@ -1,5 +1,8 @@
 'use strict';
 
+const Product = require('../../models/product');
+const db = Product.db(Sequelize);
+
 module.exports = {
     up: function (queryInterface, Sequelize) {
         /*
@@ -9,23 +12,7 @@ module.exports = {
          Example:
          return queryInterface.createTable('users', { id: Sequelize.INTEGER });
          */
-
-        queryInterface.createTable('Products', {
-            id: {
-                type: Sequelize.STRING,
-                primaryKey: true
-            },
-            name: Sequelize.STRING,
-            description: Sequelize.STRING,
-            category: Sequelize.STRING,
-            status: Sequelize.STRING,
-            sellingPrice: Sequelize.STRING,
-            purchasePrice: Sequelize.STRING,
-            billImage: Sequelize.STRING,
-            image: Sequelize.STRING,
-            createdAt: Sequelize.DATE,
-            updatedAt: Sequelize.DATE
-        });
+        queryInterface.createTable(db.tableName, db.tableFields);
     },
 
     down: function (queryInterface, Sequelize) {
@@ -36,7 +23,6 @@ module.exports = {
          Example:
          return queryInterface.dropTable('users');
          */
-        return queryInterface
-            .dropTable('Products');
+        return queryInterface.dropTable(db.tableName);
     }
 };

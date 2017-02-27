@@ -3,12 +3,14 @@
 const faker = require('faker');
 const moment = require('moment');
 const uuid = require('uuid/v1');
+const product = require('../../models/product');
 
 module.exports = {
   up: function (queryInterface, Sequelize) {
     let arrData = [];
     let category = ['tas', 'dompet', 'jam'];
     let status = ['baru', 'bekas'];
+    let db = product.db(Sequelize);
 
     for(let i=0; i<100; i++){
       arrData.push({
@@ -25,7 +27,7 @@ module.exports = {
       });
     }
 
-      return queryInterface.bulkInsert('Products', arrData, {});
+      return queryInterface.bulkInsert(db.tableName, arrData, {});
   }
   ,
 
