@@ -26,7 +26,9 @@ Model.validateData = (allowedFields, data)=>{
             data[field] = JSON.stringify(data[field]);
         }
 
-        obj[field] = _.hasIn(data, field) ? data[field] : '';
+        if(_.hasIn(data, field)) {
+            obj[field] = data[field];
+        }
     });
 
     return obj;
