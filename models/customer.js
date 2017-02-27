@@ -1,7 +1,6 @@
 'use strict';
 
 const logger = require('../configs/logger');
-const _ = require('lodash');
 const uuid = require('uuid/v1');
 const model = require('./');
 
@@ -41,7 +40,32 @@ Customer.prototype = {
      */
     db: (DataTypes)=>{
         return {tableName: tableName, tableFields: tableFields(DataTypes)};
-    }
+    },
+
+    /**
+     * add new customer
+     * @param data
+     * @param cb
+     */
+    add: (data, cb) => {
+        let attributes = ['name', 'address', 'postcode', 'phoneNumber'];
+        let customerData = model.validateData(attributes, data);
+
+        customerData['id'] = uuid();
+
+        db.create(customerData)
+            .then((result) => {
+                let customer = result.get();
+
+                logger.log('verbose', 'create new customer | details: %s', JSON.stringify(customer));
+
+                cb(null, customer);
+            })
+            .catch((err) => {
+                logger.log('error', 'error on create new customer | error: %s', err.message);
+                cb(model.errorHandler(err), null);
+            });
+    },
 };
 
 module.exports = new Customer();

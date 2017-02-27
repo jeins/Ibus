@@ -1,7 +1,6 @@
 'use strict';
 
 const logger = require('../configs/logger');
-const _ = require('lodash');
 const uuid = require('uuid/v1');
 const model = require('./');
 
@@ -11,7 +10,7 @@ let tableName = 'Products';
 /**
  * @constructor
  */
-function Product() {
+function Product() {console.log(model.test);
     db = model.sequelize.import(tableName, (sequelize, DataTypes) => {
         return model.sequelize.define(tableName, tableFields(DataTypes));
     });
@@ -57,18 +56,18 @@ Product.prototype = {
     getList: (attributes, offset, limit, cb) => {
         db.findAll({
             attributes: attributes,
-            order: 'createdAt DESC',
+            order: 'createdAt ASC',
             offset: offset,
             limit: limit
         })
             .then((products) => {
                 logger.log('info', 'get products | offset: %s | limit: %s', offset, limit);
 
-                cb(null, _decodeJson(JSON.stringify(products)));
+                cb(null, model.decodeJson(JSON.stringify(products)));
             })
             .catch((err) => {
                 logger.log('error', 'error on get products | error: %s | offset: %s | limit: %s', err.message, offset, limit);
-                cb(_errorHandler(err), null);
+                cb(model.errorHandler(err), null);
             });
     },
 
@@ -87,11 +86,11 @@ Product.prototype = {
             .then((products) => {
                 logger.log('info', 'get product by id | id: %s', productId);
 
-                cb(null, _decodeJson(JSON.stringify(products)));
+                cb(null, model.decodeJson(JSON.stringify(products)));
             })
             .catch((err) => {
                 logger.log('error', 'error on get product by id | error: %s | id: %s', err.message, productId);
-                cb(_errorHandler(err), null);
+                cb(model.errorHandler(err), null);
             });
     },
 
@@ -102,7 +101,7 @@ Product.prototype = {
      */
     add: (data, cb) => {
         let attributes = ['name', 'description', 'category', 'status', 'purchasePrice', 'sellingPrice', 'billImage', 'image'];
-        let productData = _validateData(attributes, data);
+        let productData = model.validateData(attributes, data);
 
         productData['id'] = uuid();
 
@@ -112,11 +111,11 @@ Product.prototype = {
 
                 logger.log('verbose', 'create new product | details: %s', JSON.stringify(product));
 
-                cb(null, product);
+                cb(null, model.decodeJson(JSON.stringify(product)));
             })
             .catch((err) => {
                 logger.log('error', 'error on create new product | error: %s', err.message);
-                cb(_errorHandler(err), null);
+                cb(model.errorHandler(err), null);
             });
     },
 
@@ -128,7 +127,7 @@ Product.prototype = {
      */
     update: (productId, newData, cb) => {
         let attributes = ['name', 'description', 'category', 'status', 'purchasePrice', 'sellingPrice', 'billImage', 'image'];
-        let newProductData = _validateData(attributes, newData);
+        let newProductData = model.validateData(attributes, newData);
 
         db.update(newProductData, {where: {id: productId}})
             .then((status) => {
@@ -139,7 +138,7 @@ Product.prototype = {
             })
             .catch((err) => {
                 logger.log('error', 'error on update product | error: %s | id: %s | new data: %s', err.message, productId, JSON.stringify(newProductData));
-                cb(_errorHandler(err), null);
+                cb(model.errorHandler(err), null);
             });
     },
 
@@ -158,53 +157,9 @@ Product.prototype = {
             })
             .catch((err) => {
                 logger.log('error', 'error on delete product | error: %s | id: %s', err.message, productId);
-                cb(_errorHandler(err), null);
+                cb(model.errorHandler(err), null);
             });
     }
 };
-
-function _validateData(allowedFields, data) {
-    let obj = {};
-
-    _.forEach(allowedFields, (field) => {
-        if (_.isObject(data[field])) {
-            data[field] = JSON.stringify(data[field]);
-        }
-
-        obj[field] = _.hasIn(data, field) ? data[field] : '';
-    });
-
-    return obj;
-}
-
-function _decodeJson(objs) {
-    objs = JSON.parse(objs);
-
-    let doDecode = (obj)=>{
-        _.forEach(obj, (value, key) => {
-            try {
-                obj[key] = JSON.parse(value);
-            } catch (e) {
-            }
-        });
-    };
-
-    if(_.isArray(objs)){
-        _.forEach(objs, (obj) => {
-            doDecode(obj);
-        });
-    } else{
-        doDecode(objs);
-    }
-
-    return objs;
-}
-
-function _errorHandler(err) {
-    return {
-        error: true,
-        message: err.message
-    };
-}
 
 module.exports = new Product();
