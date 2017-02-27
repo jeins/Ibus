@@ -8,7 +8,10 @@ const model = require('./');
 let db;
 let tableName = 'Customers';
 
-function Customers() {
+/**
+ * @constructor
+ */
+function Customer() {
     db = model.sequelize.import(tableName, (sequelize, DataTypes) => {
         return model.sequelize.define(tableName, tableFields(DataTypes));
     });
@@ -23,14 +26,22 @@ function tableFields(DataTypes) {
         name: DataTypes.STRING,
         address: DataTypes.STRING,
         postcode: DataTypes.STRING,
-        phoneNumber: DataTypes.STRING
+        phoneNumber: DataTypes.STRING,
+        createdAt: DataTypes.DATE,
+        updatedAt: DataTypes.DATE
     };
 }
 
-Customers.prototype = {
+Customer.prototype = {
+
+    /**
+     * db informations
+     * @param DataTypes
+     * @returns {*}
+     */
     db: (DataTypes)=>{
         return {tableName: tableName, tableFields: tableFields(DataTypes)};
     }
 };
 
-module.exports = new Customers();
+module.exports = new Customer();
