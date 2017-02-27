@@ -63,7 +63,7 @@ Product.prototype = {
             .then((products) => {
                 logger.log('info', 'get products | offset: %s | limit: %s', offset, limit);
 
-                cb(null, model.decodeJson(JSON.stringify(products)));
+                cb(null, model.decodeJson(products));
             })
             .catch((err) => {
                 logger.log('error', 'error on get products | error: %s | offset: %s | limit: %s', err.message, offset, limit);
@@ -80,13 +80,13 @@ Product.prototype = {
     getById: (attributes, productId, cb) => {
         let params = {where: {id: productId}};
 
-        if(attributes[0] !== '*') params[attributes] = attributes;
+        if(attributes[0] !== '*') params['attributes'] = attributes;
 
         db.find(params)
             .then((products) => {
                 logger.log('info', 'get product by id | id: %s', productId);
 
-                cb(null, model.decodeJson(JSON.stringify(products)));
+                cb(null, model.decodeJson(products));
             })
             .catch((err) => {
                 logger.log('error', 'error on get product by id | error: %s | id: %s', err.message, productId);
@@ -111,7 +111,7 @@ Product.prototype = {
 
                 logger.log('verbose', 'create new product | details: %s', JSON.stringify(product));
 
-                cb(null, model.decodeJson(JSON.stringify(product)));
+                cb(null, model.decodeJson(product));
             })
             .catch((err) => {
                 logger.log('error', 'error on create new product | error: %s', err.message);

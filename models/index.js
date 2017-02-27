@@ -35,7 +35,7 @@ Model.validateData = (allowedFields, data)=>{
 }
 
 Model.decodeJson = (objs)=>{
-	objs = JSON.parse(objs);
+	objs = JSON.parse(JSON.stringify(objs));
 
     let doDecode = (obj)=>{
         _.forEach(obj, (value, key) => {

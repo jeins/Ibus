@@ -39,7 +39,7 @@ Customer.prototype = {
      * @returns {*}
      */
     db: (DataTypes)=>{
-        return {tableName: tableName, tableFields: tableFields(DataTypes)};
+        return {db: db, tableName: tableName, tableFields: tableFields(DataTypes)};
     },
 
     /**
@@ -57,7 +57,7 @@ Customer.prototype = {
             .then((customer) => {
                 logger.log('info', 'get customer by id | id: %s', customerId);
 
-                cb(null, model.decodeJson(JSON.stringify(customer)));
+                cb(null, model.decodeJson(customer));
             })
             .catch((err) => {
                 logger.log('error', 'error on get customer by id | error: %s | id: %s', err.message, customerId);
