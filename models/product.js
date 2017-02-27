@@ -6,36 +6,28 @@ const uuid = require('uuid/v1');
 const model = require('./');
 
 let db;
-const tableName = 'Products';
 
-function Product() {
+function Products() {
+    let tableName = 'Products';
+
     db = model.sequelize.import(tableName, (sequelize, DataTypes) => {
-        return model.sequelize.define(tableName, tableFields(DataTypes));
+        return model.sequelize.define(tableName, {
+            id: {type: DataTypes.STRING, primaryKey: true},
+            name: DataTypes.STRING,
+            description: DataTypes.STRING,
+            category: DataTypes.STRING,
+            status: DataTypes.STRING,
+            sellingPrice: DataTypes.STRING,
+            purchasePrice: DataTypes.STRING,
+            billImage: DataTypes.STRING,
+            image: DataTypes.STRING
+        });
     });
-}
+};
 
-/**
- * @private
- */
-function tableFields(DataTypes) {
-    return {
-        id: {type: DataTypes.STRING, primaryKey: true},
-        name: DataTypes.STRING,
-        description: DataTypes.STRING,
-        category: DataTypes.STRING,
-        status: DataTypes.STRING,
-        sellingPrice: DataTypes.STRING,
-        purchasePrice: DataTypes.STRING,
-        billImage: DataTypes.STRING,
-        image: DataTypes.STRING,
-        createdAt: DataTypes.DATE,
-        updatedAt: DataTypes.DATE
-    };
-}
-
-Product.prototype = {
-    db: (DataTypes)=>{
-        return {tableName: tableName, tableFields: tableFields(DataTypes)};
+Products.prototype = {
+    db: ()=>{
+        return db;
     },
     getList: (attributes, offset, limit, cb) => {
         db.findAll({
@@ -168,4 +160,4 @@ function _errorHandler() {
     };
 }
 
-module.exports = new Product();
+module.exports = new Products();
