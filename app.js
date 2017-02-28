@@ -10,6 +10,7 @@ const corsMiddleware = require('./middlewares/cors');
 const productRoute = require('./routes/productRoute');
 const customerRoute = require('./routes/customerRoute');
 const orderRoute = require('./routes/orderRoute');
+const imageRouter = require('./routes/imageRoute');
 
 const app = express();
 
@@ -25,6 +26,7 @@ app.use(corsMiddleware);
 app.use('/product', productRoute);
 app.use('/customer', customerRoute);
 app.use('/order', orderRoute);
+app.use('/image', imageRouter);
 app.use('/version', (req, res)=>{
     logger.log('info', 'get version');
     res.json({version: process.env.VERSION || '1.0.0'});
