@@ -56,7 +56,7 @@ Product.prototype = {
     getList: (attributes, offset, limit, cb) => {
         db.findAll({
             attributes: attributes,
-            order: 'createdAt ASC',
+            order: 'createdAt DESC',
             offset: offset,
             limit: limit
         })
