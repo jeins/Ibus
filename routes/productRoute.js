@@ -91,6 +91,8 @@ function _callbackHandler(error, product){
 }
 
 function _convertImage(img){
+    if(!img.includes('jpg')) return img;
+
     let tmpArr = img.split('.');
     let imgName;
 
