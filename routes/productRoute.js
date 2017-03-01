@@ -71,16 +71,38 @@ function _callbackHandler(error, product){
             if(_.hasIn(obj, 'purchasePrice')) _convertPrice(obj.purchasePrice);
         };
 
+        let doConvertImage = (obj)=>{
+            if(_.hasIn(obj, 'image')) obj.image = _convertImage(obj.image);
+            if(_.hasIn(obj, 'billImage')) obj.billImage = _convertImage(obj.billImage);
+        };
+
         if(_.isArray(product)){
             _.forEach(product, (prod)=>{
                 doConvertPrice(prod);
+                doConvertImage(prod);
             });
         } else{
             doConvertPrice(product);
+            doConvertImage(product);
         }
 
         result.json(product);
     }
+}
+
+function _convertImage(img){
+    let tmpArr = img.split('.');
+    let imgName;
+
+    if(tmpArr.length > 2){
+        _.forEach(tmpArr, (tmp)=>{
+            imgName += tmp;
+        })
+    } else{
+        imgName = tmpArr[0];
+    }
+
+    return '/image/' + imgName + '/' + tmpArr[tmpArr.length - 1];
 }
 
 function _convertPrice(obj){
