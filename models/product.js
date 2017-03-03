@@ -2,6 +2,7 @@
 
 const logger = require('../configs/logger');
 const uuid = require('uuid/v1');
+const _ = require('lodash');
 const model = require('./');
 
 let db;
@@ -53,13 +54,19 @@ Product.prototype = {
      * @param limit
      * @param cb
      */
-    getList: (attributes, offset, limit, cb) => {
-        db.findAll({
+    getList: (attributes, offset, limit, filter, cb) => {
+        let params = {
             attributes: attributes,
             order: 'createdAt DESC',
             offset: offset,
             limit: limit
-        })
+        };
+
+        if(filter){
+            params['filter'] = _validateFilter(filter);
+        }
+
+        db.findAll(params)
             .then((products) => {
                 logger.log('info', 'get products | offset: %s | limit: %s', offset, limit);
 
@@ -161,5 +168,38 @@ Product.prototype = {
             });
     }
 };
+
+function _validateFilter(filter){
+    if(_.size('filter') > 0) return '';
+
+    let tmpFilterField = {};
+    if(_.hasIn(filter, 'productId')){
+        let tmpArr = [];
+
+        _.forEach(filter.productId, (id)=>{
+            tmpArr.push({id: id});
+        });
+
+        tmpFilterField['$or'] = tmpArr;
+    }
+
+    let tmpKeyword = {};
+    if(_.has(filter, 'keyword')){
+        let keys = ['name', 'description'];
+        let tmpArr = [];
+
+        _.forEach(keys, (key)=>{
+            let tmpObj = {};
+            tmpObj[key] = {$like: '%' + filter.keyword + '%'};
+
+            tmpArr.push(tmpObj);
+        });
+
+        tmpKeyword = {$or: tmpArr};
+    }
+
+    if(_.size(tmpFilterField) > 0) return tmpFilterField;
+    if(_.size(tmpKeyword) > 0) return tmpKeyword;
+}
 
 module.exports = new Product();

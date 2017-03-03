@@ -18,7 +18,21 @@ router.get('/list/:limit/:currPage', (req, res)=>{
     let limit = Number(req.params.limit);
     let offset = Number(currPage * limit);
 
-    product.getList(attributes, offset, limit, _callbackHandler);
+    product.getList(attributes, offset, limit, '', _callbackHandler);
+});
+
+/**
+* retrieve products from specific condition
+*/
+router.post('/filter/:limit/:currPage', (req, res)=>{
+    result = res;
+    let attributes = ['id', 'name', 'status', 'sellingPrice', 'image'];
+    let currPage = (req.params.currPage > 0) ? (req.params.currPage - 1) : 0 ;
+    let limit = Number(req.params.limit);
+    let offset = Number(currPage * limit);
+    let filter = req.body.filter;
+
+    product.getList(attributes, offset, limit, filter, _callbackHandler);
 });
 
 /**
