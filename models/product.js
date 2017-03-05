@@ -62,9 +62,7 @@ Product.prototype = {
             limit: limit
         };
 
-        if(filter){
-            params['filter'] = _validateFilter(filter);
-        }
+        if(filter) params['where'] = _validateFilter(filter);
 
         db.findAll(params)
             .then((products) => {
@@ -170,13 +168,13 @@ Product.prototype = {
 };
 
 function _validateFilter(filter){
-    if(_.size('filter') > 0) return '';
+    if(_.size(filter) === 0) return '';
 
     let tmpFilterField = {};
     if(_.hasIn(filter, 'productId')){
         let tmpArr = [];
 
-        _.forEach(filter.productId, (id)=>{
+        _.forEach(JSON.parse(filter.productId), (id)=>{
             tmpArr.push({id: id});
         });
 
@@ -184,7 +182,7 @@ function _validateFilter(filter){
     }
 
     let tmpKeyword = {};
-    if(_.has(filter, 'keyword')){
+    if(_.hasIn(filter, 'keyword')){
         let keys = ['name', 'description'];
         let tmpArr = [];
 
