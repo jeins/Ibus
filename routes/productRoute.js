@@ -24,13 +24,18 @@ router.get('/list/:limit/:currPage', (req, res)=>{
 /**
 * retrieve products from specific condition
 */
-router.post('/filter/:limit/:currPage', (req, res)=>{
+router.post('/filter', (req, res)=>{
     result = res;
     let attributes = ['id', 'name', 'status', 'sellingPrice', 'image'];
-    let currPage = (req.params.currPage > 0) ? (req.params.currPage - 1) : 0 ;
-    let limit = Number(req.params.limit);
-    let offset = Number(currPage * limit);
     let filter = req.body.filter;
+    let pagination = (_.hasIn(req.body, 'pagination')) ? req.body.pagination : '';
+    let limit, offset;
+
+    if(pagination){
+        let currPage = (pagination.currPage > 0) ? (pagination.currPage - 1) : 0 ;
+        limit = Number(pagination.limit);
+        offset = Number(currPage * limit);
+    }
 
     product.getList(attributes, offset, limit, filter, _callbackHandler);
 });

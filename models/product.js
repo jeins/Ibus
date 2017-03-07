@@ -52,17 +52,18 @@ Product.prototype = {
      * @param attributes
      * @param offset
      * @param limit
+     * @param filter
      * @param cb
      */
     getList: (attributes, offset, limit, filter, cb) => {
         let params = {
             attributes: attributes,
-            order: 'createdAt DESC',
-            offset: offset,
-            limit: limit
+            order: 'createdAt DESC'
         };
 
         if(filter) params['where'] = _validateFilter(filter);
+        if(offset) params['offset'] = offset;
+        if(limit) params['limit'] = limit;
 
         db.findAll(params)
             .then((products) => {
