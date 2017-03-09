@@ -112,6 +112,45 @@ Order.prototype = {
             });
     },
 
+    getList: (attributes, productAttributes, offset, limit, cb) => {
+        let params = {
+            order: 'createdAt DESC',
+            offset: offset,
+            limit: limit
+        };
+
+        if(attributes[0] !== '*') params['attributes'] = attributes;
+
+        db.findAll(params)
+            .then((ordersResult) => {
+                let orders = model.decodeJson(ordersResult);
+                let index = 0;
+
+                logger.log('info', 'get order list | offset: %s | limit: %s', offset, limit);
+
+                async.mapSeries(orders, (order, cb2)=>{
+                    _getProductFromId(model.decodeJson(order), productAttributes, (error, orderWithProduct)=>{
+                        if(error) cb2(error, null);
+                        else {
+                            orders[index] = orderWithProduct;
+                            cb2(null, orderWithProduct);
+                        }
+
+                        index++;
+                    });
+                }, (error, result)=>{
+                    if(error) cb(error, null);
+                    else {
+                        cb(null, orders);
+                    }
+                });
+            })
+            .catch((err) => {
+                logger.log('error', 'error on get order list | error: %s | offset: %s | limit: %s', err.message, offset, limit);
+                cb(model.errorHandler(err), null);
+            });
+    },
+
     /**
      * add new order
      * @param data
@@ -179,5 +218,31 @@ Order.prototype = {
             });
     }
 };
+
+function _getProductFromId(order, productAttributes, cb){
+    order['Product'] = [];
+
+    async.mapSeries(order.productId, (productId, cb2)=>{
+        product.getById(productAttributes, productId, (err, result)=>{
+            if(result) {
+                order['Product'].push(result);
+                cb2(null, order);
+            } else{
+                cb2(err, null);
+            }
+        });
+    }, (err, result)=>{
+        if(err) {
+            logger.log('error', 'error on get order product by id | error: %s | id: %s', err.message, order.productId);
+
+            cb(err, null);
+        }
+        else {
+            logger.log('info', 'get order product by id | id: %s', order.productId);
+
+            cb(null, order);
+        }
+    });
+}
 
 module.exports = new Order();

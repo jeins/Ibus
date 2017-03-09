@@ -22,6 +22,20 @@ router.get('/:orderId', (req, res)=>{
 });
 
 /**
+ * retrieve all ordered products with pagination
+ */
+router.get('/list/:limit/:currPage', (req, res)=>{
+    result = res;
+    let attributes = ['*'];
+    let productAttributes = ['id', 'name', 'category', 'status'];
+    let currPage = (req.params.currPage > 0) ? (req.params.currPage - 1) : 0 ;
+    let limit = Number(req.params.limit);
+    let offset = Number(currPage * limit);
+
+    order.getList(attributes, productAttributes, offset, limit, _callbackHandler);
+});
+
+/**
  * add new order
  */
 router.post('/', (req, res)=>{
