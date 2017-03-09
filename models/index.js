@@ -32,7 +32,7 @@ Model.validateData = (allowedFields, data)=>{
     });
 
     return obj;
-}
+};
 
 Model.decodeJson = (objs)=>{
 	objs = JSON.parse(JSON.stringify(objs));
@@ -46,22 +46,84 @@ Model.decodeJson = (objs)=>{
         });
     };
 
+    let doConvertImage = (obj)=>{
+        let attributes = ['image', 'billImage'];
+
+        _.forEach(attributes, (attribute)=>{
+            if(_.hasIn(obj, attribute)) obj[attribute] = _convertImage(obj[attribute]);
+        });
+    };
+
+    let doConvertPrice = (obj)=>{
+        let attributes = ['sellingPrice', 'purchasePrice', 'shippingPrice', 'totalPrice'];
+
+        _.forEach(attributes, (attribute)=>{
+            if(_.hasIn(obj, attribute)) _convertPrice(obj[attribute]);
+        });
+    };
+
     if(_.isArray(objs)){
         _.forEach(objs, (obj) => {
             doDecode(obj);
+            doConvertImage(obj);
+            doConvertPrice(obj);
         });
     } else{
         doDecode(objs);
+        doConvertImage(objs);
+        doConvertPrice(objs);
     }
 
     return objs;
-}
+};
 
 Model.errorHandler = (err)=>{
     return {
         error: true,
         message: err.message
     };
+};
+
+function _convertImage(img){
+    if(!img) return img;
+    if(!img.includes('jpg')) return img;
+
+    let tmpArr = img.split('.');
+    let imgName;
+
+    if(tmpArr.length > 2){
+        _.forEach(tmpArr, (tmp)=>{
+            imgName += tmp;
+        })
+    } else{
+        imgName = tmpArr[0];
+    }
+
+    return '/image/' + imgName + '/' + tmpArr[tmpArr.length - 1];
+}
+
+function _convertPrice(obj){
+    let priceText = [];
+
+    if(obj.currency === 'rupiah'){
+        let n = 3;
+        let val = obj.value.toString();
+        let i;
+
+        for(i=n; i < val.length; i+=n){
+            priceText.push(val.substr(val.length - i, n));
+        }
+
+        priceText = _.reverse(priceText);
+
+        let txt = '.' + _.join(priceText, '.');
+        let rest = val.replace(_.join(priceText, ''), '');
+
+        obj['text'] = 'Rp ' + ((rest === '.') ? txt : (txt === '.') ? rest : rest + txt);
+    } else{
+        //TODO
+        obj['text'] = obj.value + ' €';
+    }
 }
 
 module.exports = Model;

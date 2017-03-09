@@ -85,69 +85,8 @@ function _callbackHandler(error, product){
         result.status(500).send(error);
     }
     else {
-        let doConvertPrice = (obj)=>{
-            if(_.hasIn(obj, 'sellingPrice')) _convertPrice(obj.sellingPrice);
-            if(_.hasIn(obj, 'purchasePrice')) _convertPrice(obj.purchasePrice);
-        };
-
-        let doConvertImage = (obj)=>{
-            if(_.hasIn(obj, 'image')) obj.image = _convertImage(obj.image);
-            if(_.hasIn(obj, 'billImage')) obj.billImage = _convertImage(obj.billImage);
-        };
-
-        if(_.isArray(product)){
-            _.forEach(product, (prod)=>{
-                doConvertPrice(prod);
-                doConvertImage(prod);
-            });
-        } else{
-            doConvertPrice(product);
-            doConvertImage(product);
-        }
 
         result.json(product);
-    }
-}
-
-function _convertImage(img){
-    if(!img) return img;
-    if(!img.includes('jpg')) return img;
-
-    let tmpArr = img.split('.');
-    let imgName;
-
-    if(tmpArr.length > 2){
-        _.forEach(tmpArr, (tmp)=>{
-            imgName += tmp;
-        })
-    } else{
-        imgName = tmpArr[0];
-    }
-
-    return '/image/' + imgName + '/' + tmpArr[tmpArr.length - 1];
-}
-
-function _convertPrice(obj){
-    let priceText = [];
-
-    if(obj.currency === 'rupiah'){
-        let n = 3;
-        let val = obj.value.toString();
-        let i;
-
-        for(i=n; i < val.length; i+=n){
-            priceText.push(val.substr(val.length - i, n));
-        }
-
-        priceText = _.reverse(priceText);
-
-        let txt = '.' + _.join(priceText, '.');
-        let rest = val.replace(_.join(priceText, ''), '');
-
-        obj['text'] = 'Rp ' + ((rest === '.') ? txt : (txt === '.') ? rest : rest + txt);
-    } else{
-        //TODO
-        obj['text'] = obj.value + ' €';
     }
 }
 
