@@ -22,6 +22,18 @@ router.get('/:orderId', (req, res)=>{
 });
 
 /**
+ * retrieve order with specific product id
+ */
+router.get('/product/:productId', (req, res)=>{
+    result = res;
+    let productId = req.params.productId;
+    let attributes = ['*'];
+    let customerAttributes = ['name', 'address', 'postcode'];
+
+    order.getByProduct(productId, attributes, customerAttributes, _callbackHandler);
+});
+
+/**
  * retrieve all ordered products with pagination
  */
 router.get('/list/:limit/:currPage', (req, res)=>{

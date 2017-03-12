@@ -112,6 +112,14 @@ Order.prototype = {
             });
     },
 
+    /**
+     * get order list
+     * @param attributes
+     * @param productAttributes
+     * @param offset
+     * @param limit
+     * @param cb
+     */
     getList: (attributes, productAttributes, offset, limit, cb) => {
         let params = {
             order: 'createdAt DESC',
@@ -147,6 +155,38 @@ Order.prototype = {
             })
             .catch((err) => {
                 logger.log('error', 'error on get order list | error: %s | offset: %s | limit: %s', err.message, offset, limit);
+                cb(model.errorHandler(err), null);
+            });
+    },
+
+    /**
+     * get order by product id
+     * @param productId
+     * @param attributes
+     * @param customerAttributes
+     * @param cb
+     */
+    getByProduct: (productId, attributes, customerAttributes, cb) => {
+        let params = {
+            where: {
+                productId: {$like: '%'+productId+'%'}
+            },
+            include: [
+                {model: customerDb.db}
+            ]
+        };
+
+        if(attributes[0] !== '*') params[attributes] = attributes;
+        if(customerAttributes[0] !== '*') params.include[0]['attributes'] = customerAttributes;
+
+        db.find(params)
+            .then((orderResult) => {
+                let order = model.decodeJson(orderResult);
+
+                cb(null, order);
+            })
+            .catch((err) => {
+                logger.log('error', 'error on get order by id | error: %s | id: %s', err.message, orderId);
                 cb(model.errorHandler(err), null);
             });
     },
