@@ -29,8 +29,9 @@ router.get('/product/:productId', (req, res)=>{
     let productId = req.params.productId;
     let attributes = ['*'];
     let customerAttributes = ['name', 'address', 'postcode'];
+    let productAttributes = ['id', 'name', 'category', 'status', 'image', 'description'];
 
-    order.getByProduct(productId, attributes, customerAttributes, _callbackHandler);
+    order.getByProduct(productId, attributes, customerAttributes, productAttributes, _callbackHandler);
 });
 
 /**

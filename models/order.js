@@ -164,9 +164,10 @@ Order.prototype = {
      * @param productId
      * @param attributes
      * @param customerAttributes
+     * @param productAttributes
      * @param cb
      */
-    getByProduct: (productId, attributes, customerAttributes, cb) => {
+    getByProduct: (productId, attributes, customerAttributes, productAttributes, cb) => {
         let params = {
             where: {
                 productId: {$like: '%'+productId+'%'}
@@ -183,7 +184,14 @@ Order.prototype = {
             .then((orderResult) => {
                 let order = model.decodeJson(orderResult);
 
-                cb(null, order);
+                product.getById(productAttributes, productId, (err, result)=>{
+                    if(result) {
+                        order['Product'] = (result);
+                        cb(null, order);
+                    } else{
+                        cb(err, null);
+                    }
+                });
             })
             .catch((err) => {
                 logger.log('error', 'error on get order by id | error: %s | id: %s', err.message, orderId);
