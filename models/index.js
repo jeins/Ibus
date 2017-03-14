@@ -47,7 +47,7 @@ Model.decodeJson = (objs)=>{
     };
 
     let doConvertImage = (obj)=>{
-        let attributes = ['image', 'billImage'];
+        let attributes = ['image', 'billImage', 'firstTransferImage', 'receiptImage'];
 
         _.forEach(attributes, (attribute)=>{
             if(_.hasIn(obj, attribute)) obj[attribute] = _convertImage(obj[attribute]);
